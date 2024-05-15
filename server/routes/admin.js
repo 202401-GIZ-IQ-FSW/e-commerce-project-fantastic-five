@@ -4,8 +4,6 @@ const ShopItem = require('../models/shop-item');
 
 
 
-
-
 router.get('/items', async (req, res) => {
     try {
         const items = await ShopItem.find();
@@ -29,7 +27,7 @@ router.post('/items', async (req, res) => {
 });
 
 // Search for shop items
-router.get('/items/search', async (req, res) => {
+router.get('/items', async (req, res) => {
     try {
         const query = {};
         if (req.query.title) query.title = new RegExp(req.query.title, 'i'); // Case-insensitive search for name
@@ -65,3 +63,5 @@ router.delete('/items/:id', async (req, res) => {
 });
 
 module.exports = router;
+
+

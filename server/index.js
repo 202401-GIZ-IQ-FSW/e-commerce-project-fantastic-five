@@ -1,8 +1,13 @@
+// Importing Requirements
 const express = require("express");
 const adminRouter = require('./routes/admin')
 require("dotenv").config();
 
+// Importing Database connection info
 const connectToMongo = require("./db/connection");
+
+// Importing Routes
+const adminRouter = require('./routes/admin');
 
 const app = express();
 const port =
@@ -13,11 +18,15 @@ const port =
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
+// Using Routes
+app.use('/admin', adminRouter)
+
 
 app.use('/admin', adminRouter);
 
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
+  // Connecting to the Database
   connectToMongo();
 });
 

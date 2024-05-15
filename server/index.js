@@ -1,6 +1,5 @@
 // Importing Requirements
 const express = require("express");
-const adminRouter = require('./routes/admin')
 require("dotenv").config();
 
 // Importing Database connection info
@@ -21,8 +20,6 @@ app.use(express.json());
 // Using Routes
 app.use('/admin', adminRouter)
 
-
-app.use('/admin', adminRouter);
 
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);

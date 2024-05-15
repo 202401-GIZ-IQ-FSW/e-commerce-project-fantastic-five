@@ -24,7 +24,6 @@ app.use('/admin', adminRoutes);
 // Using Routes for customers
 app.use("/customer", customerRoutes);
 
-
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
   // Connecting to the Database

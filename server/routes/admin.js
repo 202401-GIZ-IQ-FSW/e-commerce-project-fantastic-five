@@ -2,6 +2,21 @@ const express = require('express');
 const router = express.Router();
 const ShopItem = require('../models/shop-item');
 
+
+
+
+
+router.get('/items', async (req, res) => {
+    try {
+        const items = await ShopItem.find();
+        res.json(items);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+});
+
+
+
 // Add new shop item
 router.post('/items', async (req, res) => {
     try {
@@ -16,8 +31,8 @@ router.post('/items', async (req, res) => {
 // Search for shop items
 router.get('/items/search', async (req, res) => {
     try {
-        const query = {}; 
-        if (req.query.name) query.name = new RegExp(req.query.name, 'i'); // Case-insensitive search for name
+        const query = {};
+        if (req.query.title) query.title = new RegExp(req.query.title, 'i'); // Case-insensitive search for name
         if (req.query.description) query.description = new RegExp(req.query.description, 'i'); // Case-insensitive search for description
         if (req.query.genre) query.genre = new RegExp(req.query.genre, 'i'); // Case-insensitive search for genre
         const items = await ShopItem.find(query); // Find items in the database that match the query object

@@ -27,7 +27,7 @@ const ShopItemSchema = new Schema({
         required: true,
         min: 0 // Ensure the available count is a non-negative number
     },
-    genre: {
+    genreOrCategory: {
         type: String,
         required: true,
         trim: true // Removes whitespace from both ends of a string

@@ -9,11 +9,6 @@ const ensureAuthenticated = require('../middleware/ensureAuthenticated');
 /// Getting all shop items with search functionality
 router.get('/items', async (req, res) => {
   try {
-
-    const userId = req.session?.user?._id;
-
-    console.log(`============================${[userId]}================================`);
-
     const { genreOrCategory, minPrice, maxPrice, title, description } = req.query;
     let query = {};
     if (title) query.title = new RegExp(title, 'i');

@@ -54,7 +54,10 @@ function attachUser(req, res, next) {
 app.use(attachUser)
 
 // Using Routes for User Auth
-app.use('/user', authRouter);
+app.use('/admin', authRouter);
+
+// Using Routes for User Auth
+app.use('/customer', authRouter);
 
 // Using Routes for admin
 app.use('/admin', ensureAuthenticated, ensureAdmin, adminRoutes);

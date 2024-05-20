@@ -194,7 +194,7 @@ router.post('/checkout', async (req, res) => {
 });
 
 // Fetching Orders
-router.get('/customer/orders', async (req, res) => {
+router.get('/orders', async (req, res) => {
   try {
     const customerId = req.session?.user?._id;
 

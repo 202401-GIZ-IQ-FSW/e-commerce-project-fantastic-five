@@ -13,13 +13,18 @@ router.post('/signin', async (req, res) => {
   // User must exist in the database for sign in request
   const user = await User.findOne({ email });
   if (!user) {
-    return res.status(400).send({ message: 'Wrong username' });
+    return res.status(400).send({ message: 'Wrong email' });
   }
 
   // bcrypt compare is used to validate the plain text password sent in the request body with the hashed password stored in the database
   const valid = await bcrypt.compare(password, user.password);
   if (!valid) {
     return res.status(400).send({ message: 'Wrong password' });
+  }
+
+  // If the user is already signed in don't sign in again
+  if (req.session?.user) {
+    return res.status(400).send({ message: 'User already signed in' });
   }
 
   // If password is valid, it's a sign in success User details is returned in response and session

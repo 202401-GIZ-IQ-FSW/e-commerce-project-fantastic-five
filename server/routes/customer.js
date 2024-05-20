@@ -3,6 +3,7 @@ const router = express.Router();
 const ShopItem = require('../models/shop-item');
 const Cart = require('../models/user');
 const User = require('../models/user');
+const Order = require('../models/user');
 const ensureAuthenticated = require('../middleware/ensureAuthenticated');
 
 
@@ -192,6 +193,60 @@ router.post('/checkout', async (req, res) => {
   }
 });
 
+// Fetching Orders
+router.get('/customer/orders', async (req, res) => {
+  try {
+    const customerId = req.session?.user?._id;
+
+    if (!customerId) {
+      return res.status(401).json({ message: 'User not authenticated' });
+    }
+
+    const user = await User.findById(customerId).select('orders');
+    res.status(200).json({ orders: user.orders });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+// Fetching and Updating Profile
+router.get('/profile', async (req, res) => {
+  try {
+    const customerId = req.session?.user?._id;
+
+    if (!customerId) {
+      return res.status(401).json({ message: 'User not authenticated' });
+    }
+
+    const user = await User.findById(customerId);
+    res.status(200).json({ user });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.put('/profile', async (req, res) => {
+  try {
+    const customerId = req.session?.user?._id;
+
+    if (!customerId) {
+      return res.status(401).json({ message: 'User not authenticated' });
+    }
+
+    const { name, email } = req.body;
+
+    const user = await User.findByIdAndUpdate(
+      customerId,
+      { name, email },
+      { new: true }
+    );
+
+    res.status(200).json({ user });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 
 

@@ -1,0 +1,15 @@
+<div class="d-flex justify-content-between">
+  <h1 class="mb-1"><%= item.title %></h1>
+  <div>
+    <a href="/" class="btn btn-secondary">All Items</a>
+    <% if (user && user.isAdmin) { %>
+    <a href="items/edit/<%= item.id %>" class="btn btn-info">Edit</a>
+    <% } %>
+  </div>
+</div>
+
+<div class="article my-5" id="article-html">
+  <p><%= item.description %></p>
+  <p><%= item.price %> $</p>
+  <p><%= item.availableCount %> Pcs</p>
+</div>

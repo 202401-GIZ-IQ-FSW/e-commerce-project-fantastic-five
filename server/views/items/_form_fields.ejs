@@ -1,0 +1,28 @@
+<div class="form-group">
+  <label for="title">Title</label>
+  <input required value="<%= item.title %>" type="text" name="title" id="title" class="form-control" />
+</div>
+<div class="form-group">
+  <label for="image">Image</label>
+  <input required value="<%= item.image %>" type="text" name="image" id="image" class="form-control" />
+</div>
+<div class="form-group">
+  <label for="price">Price</label>
+  <input required value="<%= item.price %>" type="text" name="price" id="price" class="form-control" />
+</div>
+<div class="form-group">
+  <label for="description">Description</label>
+  <textarea name="description" id="description" class="form-control" style="min-height: 60px"><%= item.description %></textarea>
+</div>
+<div class="form-group">
+  <label for="availableCount">Available Count</label>
+  <input required value="<%= item.availableCount %>" type="text" name="availableCount" id="availableCount" class="form-control" />
+</div>
+<div class="form-group mb-2">
+  <label for="genreOrCategory">Genre Or Category</label>
+  <input required value="<%= item.genreOrCategory %>" type="text" name="genreOrCategory" id="genreOrCategory" class="form-control" />
+</div>
+<% if (user && user.isAdmin) { %>
+<a href="/" class="btn btn-secondary">Cancel</a>
+<button type="submit" class="btn btn-primary">Save</button>
+<% } %>

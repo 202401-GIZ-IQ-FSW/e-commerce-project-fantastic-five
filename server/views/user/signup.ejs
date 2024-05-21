@@ -1,0 +1,33 @@
+<h1 class="mb-4">Create an account</h1>
+<script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
+<form action="/user/signup" enctype="application/x-www-form-urlencoded" method="post">
+    <div class="row g-5 mb-3">
+        <div class="form-group col-md-6">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" id="name" placeholder="Name" name="name">
+        </div>
+    </div>
+    <div class="row mb-6 g-5">
+        <div class="col-md-6">
+            <div class="form-group mb-3">
+                <label for="email">Email</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="email" aria-describedby="usernameSymbol usernameHelp"
+                        placeholder="Email" name="email">
+                </div>
+                <small id="usernameHelp" class="form-text text-muted">This will be used to login. You can't change
+                    it</small>
+            </div>
+            <div class="form-group mb-3">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" id="password" placeholder="Password" name="password">
+            </div>
+            <div class="form-check mb-3">
+                <input type="checkbox" class="form-check-input" id="acceptsTOS" name="acceptTos">
+                <label class="form-check-label" for="acceptsTOS">I accept the <a href="#">terms of service</a></label>
+            </div>
+            <button type="submit" class="btn btn-primary">Create account</button>
+        </div>
+    </div>
+</form>

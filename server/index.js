@@ -15,6 +15,9 @@ const authRouter = require('./routes/auth');
 const ensureAuthenticated = require('./middleware/ensureAuthenticated');
 const ensureAdmin = require('./middleware/ensureAdmin');
 
+// Importing CORS 
+const cors = require("cors");
+
 const app = express();
 const port =
   process.env.NODE_ENV === "test"
@@ -23,6 +26,9 @@ const port =
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+
+// Use CORS middleware globally
+app.use(cors());
 
 // Configure session options
 const sessionOptions = {

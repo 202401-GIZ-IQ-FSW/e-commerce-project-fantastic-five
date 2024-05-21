@@ -1,18 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const ShopItem = require('../models/shop-item');
-
-
-
-router.get('/items', async (req, res) => {
-    try {
-        const items = await ShopItem.find();
-        res.json(items);
-    } catch (err) {
-        res.status(400).json({ error: err.message });
-    }
-});
-
+// added user model
+const User = require('../models/user');
 
 
 // Add new shop item
@@ -22,7 +12,7 @@ router.post('/items', async (req, res) => {
         const item = await newItem.save(); // Save the new item to the database
         res.status(201).json(item);
     } catch (err) {
-        res.status(400).json({ error: err.message });
+        res.status(500).json({ error: err.message });
     }
 });
 
@@ -32,11 +22,11 @@ router.get('/items', async (req, res) => {
         const query = {};
         if (req.query.title) query.title = new RegExp(req.query.title, 'i'); // Case-insensitive search for name
         if (req.query.description) query.description = new RegExp(req.query.description, 'i'); // Case-insensitive search for description
-        if (req.query.genre) query.genre = new RegExp(req.query.genre, 'i'); // Case-insensitive search for genre
+        if (req.query.genreOrCategory) query.genreOrCategory = new RegExp(req.query.genreOrCategory, 'i'); // Case-insensitive search for genre
         const items = await ShopItem.find(query); // Find items in the database that match the query object
         res.json(items); // Respond with found item
     } catch (err) {
-        res.status(400).json({ error: err.message });
+        res.status(500).json({ error: err.message });
     }
 });
 
@@ -47,7 +37,7 @@ router.put('/items/:id', async (req, res) => {
         if (!item) return res.status(404).json({ error: 'Item not found' });
         res.json(item); // Respond with the updated item
     } catch (err) {
-        res.status(400).json({ error: err.message });
+        res.status(500).json({ error: err.message });
     }
 });
 
@@ -58,8 +48,104 @@ router.delete('/items/:id', async (req, res) => {
         if (!item) return res.status(404).json({ error: 'Item not found' });
         res.json({ message: 'Item deleted successfully' });  // Respond with successful message
     } catch (err) {
-        res.status(400).json({ error: err.message });
+        res.status(500).json({ error: err.message });
     }
+});
+
+// new routes
+router.get('/customers', async (req, res) => {
+    try {
+        const users = await User.find();
+        if (!users) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        res.json(users);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+router.get('/orders', async (req, res) => {
+    try {
+        const users = await User.find().populate('orders.items.itemId');
+        if (!users) {
+            return res.status(404).json({ error: 'Orders not found' });
+        }
+        const orders = users.map( (user) => { return {name: user.name, email: user.email, orders: user.orders} })
+        res.json(orders);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+router.put('/new-admin', async (req, res) => {
+    try {
+        const { email, isAdmin } = req.body;
+
+        // Check if both email and isAdmin are provided
+        if (!email) {
+            return res.status(400).json({ error: 'Please provide a valid email' });
+        } else if (typeof isAdmin !== 'boolean') {
+            return res.status(400).json({ error: 'Please provide a valid isAdmin, either true or false' });
+        }
+
+        // Prevent changing the status of the main admin
+        if (email === process.env.ADMIN_EMAIL) {
+            return res.status(403).json({ error: 'Cannot change the status of the main Admin' });
+        }
+
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        user.isAdmin = isAdmin;
+        await user.save();
+        res.json(user);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+router.route('/profile')
+    .get(async (req, res) => {
+        try {
+            const adminId = req.session?.user?._id;
+            const user = await User.findById(adminId);
+            if (!user) {
+                return res.status(404).json({ error: 'User not found' });
+            }
+            res.json(user);
+        } catch (err) {
+            res.status(500).json({ error: err.message });
+        }
+    })
+    .put(async (req, res) => {
+        try {
+            const adminId = req.session.user._id;
+            const updateData = req.body;
+            const user = await User.findByIdAndUpdate(adminId, updateData, { new: true });
+            if (!user) {
+                return res.status(404).json({ error: 'User not found' });
+            }
+            res.json(user);
+        } catch (err) {
+            res.status(500).json({ error: err.message });
+        }
+    })
+    .delete(async (req, res) => {
+      try {
+          const adminId = req.session.user._id;
+          const user = await User.findById(adminId);
+          if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+          }
+          await user.remove();
+          res.json({ message: 'Profile deleted successfully' });
+      } catch (err) {
+          res.status(500).json({ error: err.message });
+      }
 });
 
 module.exports = router;

@@ -1,0 +1,9 @@
+<% if (user && user.isAdmin) { %>
+<h1 class="mb-4">Edit Item</h1>
+<% } else { %>
+<h1 class="mb-4">View Item</h1>
+<% } %>
+
+<form action="/admin/items/<%= item.id %>?_method=PUT" method="POST">
+  <%- include('_form_fields') %>
+</form>

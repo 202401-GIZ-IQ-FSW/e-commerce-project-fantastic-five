@@ -1,0 +1,26 @@
+<h1 class="mb-4">Shopping</h1>
+<% if (user && user.isAdmin) { %>
+<a href="/admin/items/new" class="btn btn-success">New Item</a>
+<% } %>
+
+<% items.forEach(item => { %>
+<div class="card mt-4">
+  <div class="card-body">
+    <h4 class="card-title"><%= item.title %></h4>
+    <div class="card-subtitle text-muted mb-2">
+      <%= item.description %>
+    </div>
+    <div class="card-text mb-2"><%= item.price %> $</div>
+    <div class="card-text mb-2"><%= item.availableCount %> Pcs</div>
+    <div class="card-text mb-2"><%= item.genreOrCategory %></div>
+    <% if (user && user.isAdmin) { %>
+    <a href="/admin/items/edit/<%= item.id %>" class="btn btn-info">Edit</a>
+    <form action="/admin/items/<%= item.id %>?_method=DELETE" method="POST" class="d-inline">
+      <button type="submit" class="btn btn-danger">Delete</button>
+    </form>
+    <% } else {%>
+    <a href="items/<%= item.id %>" class="btn btn-info">View</a>
+    <% } %>
+  </div>
+</div>
+<% }) %>

@@ -2,6 +2,12 @@
 const express = require("express");
 require("dotenv").config();
 const session = require('express-session');
+// changed
+const partials = require('express-partials');
+const methodOverride = require('method-override');
+const path = require('path');
+// Models
+const Item = require('./models/shop-item');
 
 // Importing Database connection info
 const connectToMongo = require("./db/connection");
@@ -53,14 +59,33 @@ function attachUser(req, res, next) {
 // use the attachUser function
 app.use(attachUser)
 
+// changed
+// Set view engine and views dir
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+app.use(partials());
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(methodOverride('_method'));
+
+// Home page
+app.get('/', async (req, res) => {
+  const items = await Item.find().sort({ createdAt: 'desc' });
+  res.render('items/index', { items: items });
+});
+
+app.get('/items/:id', async (req, res) => {
+  const item = await Item.findById(req.params.id);
+  res.render('items/show', { item: item });
+});
+
 // Using Routes for User Auth
 app.use('/user', authRouter);
 
 // Using Routes for admin
-app.use('/admin', ensureAuthenticated, ensureAdmin, adminRoutes);
+app.use('/admin', ensureAuthenticated(), ensureAdmin, adminRoutes);
 
 // Using Routes for customers
-app.use("/customer", ensureAuthenticated, customerRoutes);
+app.use("/customer", ensureAuthenticated(), customerRoutes);
 
 app.listen(port, async () => {
   console.log(`Server listening on port ${port}`);

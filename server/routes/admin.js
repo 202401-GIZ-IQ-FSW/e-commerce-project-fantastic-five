@@ -3,14 +3,17 @@ const router = express.Router();
 const ShopItem = require('../models/shop-item');
 // added user model
 const User = require('../models/user');
-
+const isBrowser = require('../middleware/isBrowser');
 
 // Add new shop item
 router.post('/items', async (req, res) => {
     try {
         const newItem = new ShopItem(req.body); // Create a new shop item using the data from the request body
         const item = await newItem.save(); // Save the new item to the database
-        res.status(201).json(item);
+        if (isBrowser(req, res)) {
+            return res.status(201).redirect('/');
+        }
+        return res.status(201).json(item);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -34,7 +37,15 @@ router.get('/items', async (req, res) => {
 router.put('/items/:id', async (req, res) => {
     try {
         const item = await ShopItem.findByIdAndUpdate(req.params.id, req.body, { new: true }); // Find the item by ID and update it with the new data from the request body
-        if (!item) return res.status(404).json({ error: 'Item not found' });
+        if (!item) {
+            if (isBrowser(req, res)) {
+                return res.status(404).redirect('/');
+            }
+            return res.status(404).json({ error: 'Item not found' });
+        }
+        if (isBrowser(req, res)) {
+            return res.redirect('/');
+        }
         res.json(item); // Respond with the updated item
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -45,7 +56,15 @@ router.put('/items/:id', async (req, res) => {
 router.delete('/items/:id', async (req, res) => {
     try {
         const item = await ShopItem.findByIdAndDelete(req.params.id);  // Find item by ID and delete it 
-        if (!item) return res.status(404).json({ error: 'Item not found' });
+        if (!item) {
+            if (isBrowser(req, res)) {
+                return res.status(404).redirect('/');
+            }
+            return res.status(404).json({ error: 'Item not found' });
+        }
+        if (isBrowser(req, res)) {
+            return res.redirect('/');
+        }
         res.json({ message: 'Item deleted successfully' });  // Respond with successful message
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -146,6 +165,23 @@ router.route('/profile')
       } catch (err) {
           res.status(500).json({ error: err.message });
       }
+});
+
+router.get('/items/new', async (req, res) => {
+    try {
+        res.render('items/new', { item: new ShopItem() });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+router.get('/items/edit/:id', async (req, res) => {
+    try {
+        const item = await ShopItem.findById(req.params.id);
+        res.render('items/edit', { item: item });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 });
 
 module.exports = router;

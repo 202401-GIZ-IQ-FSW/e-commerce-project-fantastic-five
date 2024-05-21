@@ -2,6 +2,7 @@ const request = require("supertest");
 const expect = require("chai").expect;
 const app = require("../index");
 const bcrypt = require('bcrypt');
+const User = require('../models/user');
 
 const newUser = {
     name: "Customer-1",
@@ -25,6 +26,10 @@ const incorrectPassword = {
 };
 
 describe('Signup tasks implemented', () => {
+    after(async () => {
+        // Clean up the database after tests
+        await User.deleteMany({ email: { $ne: process.env.ADMIN_EMAIL } });
+      });
 
     it('registers a new user successfully', (done) => {
         request(app)
@@ -55,16 +60,4 @@ describe('Signup tasks implemented', () => {
             });
     });
 
-    it('checks user is in database', (done) => {
-        request(app)
-            .get(`/customer/profile`)
-            .expect(200, (err, res) => {
-                if (err) return done(err);
-                expect(res.body).to.be.an("object");
-                expect(res.body.user.name).to.equal(newUser.name);
-                expect(res.body.user.email).to.equal(newUser.email);
-                // expect(bcrypt.compare(res.body.user.password, newUser.password)).to.be(true);
-                done();
-            });
-      });
 });

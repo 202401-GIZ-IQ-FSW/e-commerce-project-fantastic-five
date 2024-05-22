@@ -28,7 +28,7 @@ const incorrectPassword = {
 describe('Signup tasks implemented', () => {
     after(async () => {
         // Clean up the database after tests
-        await User.deleteMany({ email: { $eq: 'customer1@customer.com' } });
+        await User.deleteMany({ email: { $ne: process.env.ADMIN_EMAIL } });
       });
 
     it('registers a new user successfully', (done) => {

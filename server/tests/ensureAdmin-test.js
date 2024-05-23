@@ -1,9 +1,8 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
+const { expect } = chai;
 const app = require('../index');
 const User = require('../models/user');
-const { expect } = chai;
-const bcrypt = require('bcrypt');
 
 chai.use(chaiHttp);
 
@@ -12,11 +11,10 @@ describe('Test ensureAdmin middleware', () => {
 
   before(async () => {
     // Create a non-admin user
-    const hashedPassword = await bcrypt.hash("customer2", 10);
     user = await User.create({
         name: "Customer-2",
         email: "customer2@customer.com",
-        password: hashedPassword
+        password: "Customer$2"
     });
   });
 
@@ -28,7 +26,7 @@ describe('Test ensureAdmin middleware', () => {
   it('should return 403 with message Unauthorized the user is not an admin', async () => {
     const correctCostumer = {
         email: "customer2@customer.com",
-        password: "customer2"
+        password: "Customer$2"
     };
 
     const agent = chai.request.agent(app);

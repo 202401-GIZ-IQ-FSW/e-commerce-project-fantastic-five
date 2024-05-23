@@ -30,7 +30,10 @@ const sessionOptions = {
   name: 'sid',
   resave: false, // don't save the sessions back to the session store
   saveUninitialized: false, // don't save uninitialized sessions to the session store
-  cookie: {},
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 24, // set cookie age to 1 day in milliseconds
+    sameSite: 'lax' // prevent cross-site request forgery (CSRF) attacks
+  }
 };
 
 // check if in production environment

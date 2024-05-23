@@ -27,11 +27,11 @@ const connectToMongo = async () => {
   const adminExists = await User.exists({ email: ADMIN_EMAIL});
   // If admin root doesn't exist, we create it
   if (!adminExists) {
-    const hashedPassword = await bcrypt.hash(ADMIN_PASS, 10); // Hash the password
-    const admin = await new User({
+    // const hashedPassword = await bcrypt.hash(ADMIN_PASS, 10); // Hash the password
+    const admin = new User({
       name: 'Root Admin',
       email: ADMIN_EMAIL,
-      password: hashedPassword,
+      password: ADMIN_PASS,
       isAdmin: true
     });
     await admin.save();
